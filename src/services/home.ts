@@ -1,3 +1,4 @@
+import type { BannerItem } from '@/types/home'
 import { http } from '@/utils/http'
 /**
  *首页-广告区域-小程序
@@ -6,7 +7,7 @@ import { http } from '@/utils/http'
  * @returns
  */
 export const getHomeBannerAPI = (distributionSite = 1) => {
-  return http({
+  return http<BannerItem[]>({
     url: '/home/banner',
     method: 'GET',
     data: {
