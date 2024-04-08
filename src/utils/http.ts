@@ -64,9 +64,33 @@ export const http = <T>(options: UniApp.RequestOptions) => {
     uni.request({
       ...options,
       // 2.请求成功
+      // 响应成功
       success: (res) => {
-        //2.1提取核心数据res.data
-        resolve(res.data as Data<T>)
+        //状态码2xx，axios就是这样设计的
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          //2.1提取核心数据res.data
+          resolve(res.data as Data<T>)
+        } else if (res.statusCode === 401) {
+          //401错误->清理用户信息，跳转到登录页
+          const memberStore = useMemberStore()
+          memberStore.clearProfile()
+          uni.navigateTo({ url: '/pages/login/login' })
+          reject(res)
+        } else {
+          //其他错误->根据后端错误信息轻提示
+          uni.showToast({
+            icon: 'none',
+            title: (res.data as Data<T>).msg || '请求错误',
+          })
+        }
+      },
+      // 响应失败
+      fail(err) {
+        uni.showToast({
+          icon: 'none',
+          title: '网络错误,换个网络试试',
+        })
+        reject(err)
       },
     })
   })
