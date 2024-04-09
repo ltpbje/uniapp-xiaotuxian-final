@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { getHomeBannerAPI } from '@/services/home'
+import { getHomeBannerAPI, getHomeCategoryAPI } from '@/services/home'
 import { onLoad } from '@dcloudio/uni-app'
 import CustomNavbar from './components/CustomNavbar.vue'
 import type { BannerItem } from '@/types/home'
@@ -14,7 +14,13 @@ const getHomeBannelData = async () => {
 }
 onLoad(() => {
   getHomeBannelData()
+  getHomeCategoryData()
 })
+
+// 获取前台分类数据
+const getHomeCategoryData = async () => {
+  const res = await getHomeCategoryAPI()
+}
 </script>
 
 <template>
