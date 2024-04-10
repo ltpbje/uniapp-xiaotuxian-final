@@ -37,3 +37,13 @@ export const getHomeHotAPI = () => {
     method: 'GET',
   })
 }
+// 首页模块
+// 猜你喜欢-小程序
+// GET
+// /home/goods/guessLike
+export const getHomeGoodsGuessLikeAPI = () => {
+  return http({
+    url: '/home/goods/guessLike',
+    method: 'GET',
+  })
+}
