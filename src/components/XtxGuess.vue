@@ -12,6 +12,10 @@ const getHomeGoodsGuessLikeData = async () => {
 onMounted(() => {
   getHomeGoodsGuessLikeData()
 })
+// 暴露组件的方法
+defineExpose({
+  getMore: getHomeGoodsGuessLikeData,
+})
 </script>
 
 <template>
@@ -30,7 +34,7 @@ onMounted(() => {
       <view class="name"> {{ item.name }}</view>
       <view class="price">
         <text class="small">¥</text>
-        <text>{{ item.picture }}</text>
+        <text>{{ item.price }}</text>
       </view>
     </navigator>
   </view>
