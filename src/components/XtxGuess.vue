@@ -11,13 +11,27 @@ const pageParams: Required<PageParams> = {
 }
 // 获取猜你喜欢的数据
 const guessList = ref<GuessItem[]>([])
+const finish = ref(false)
 const getHomeGoodsGuessLikeData = async () => {
+  // 退出判断
+  if (finish.value == true) {
+    return uni.showToast({
+      icon: 'none',
+      title: '已经到底了...',
+    })
+  }
   const res = await getHomeGoodsGuessLikeAPI(pageParams)
   // guessList.value = res.result.items
   // 数组追加
   guessList.value.push(...res.result.items)
-  // 页码累加
-  pageParams.page++
+  // 分页条件
+  if (pageParams.page < res.result.pages) {
+    // 页码累加
+    pageParams.page++
+  } else {
+    // 完成分页渲染
+    finish.value = true
+  }
 }
 onMounted(() => {
   getHomeGoodsGuessLikeData()
@@ -48,7 +62,7 @@ defineExpose({
       </view>
     </navigator>
   </view>
-  <view class="loading-text"> 正在加载... </view>
+  <view class="loading-text">{{ finish ? '已经到底了..' : '加载中...' }}</view>
 </template>
 
 <style lang="scss">
