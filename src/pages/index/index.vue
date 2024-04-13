@@ -42,12 +42,31 @@ const onScrolltoLower = () => {
   console.log('触底了', guessRef)
   guessRef.value?.getMore()
 }
+const isTriggered = ref(false)
+// 自定义下拉刷新被触发
+const onRefresherrefresh = async () => {
+  // 开始动画
+  isTriggered.value = true
+  // 加载数据
+  await getHomeBannelData()
+  await getHomeCategoryData()
+  await getHomeHotData()
+  // 结束动画
+  isTriggered.value = false
+}
 </script>
 
 <template>
   <!-- 自定义导航栏 -->
   <CustomNavbar></CustomNavbar>
-  <scroll-view @scrolltolower="onScrolltoLower" class="scroll-view" scroll-y>
+  <scroll-view
+    refresher-enabled
+    @refresherrefresh="onRefresherrefresh"
+    :refresher-triggered="isTriggered"
+    @scrolltolower="onScrolltoLower"
+    class="scroll-view"
+    scroll-y
+  >
     <!-- 自定义轮播图 -->
     <XtxSwiper :list="bannelList"></XtxSwiper>
     <!-- 分类面板 -->
