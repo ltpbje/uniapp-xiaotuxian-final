@@ -47,11 +47,18 @@ const isTriggered = ref(false)
 const onRefresherrefresh = async () => {
   // 开始动画
   isTriggered.value = true
+  // 重置猜你喜欢数据
+  guessRef.value?.resetData()
   // 加载数据
-  await getHomeBannelData()
-  await getHomeCategoryData()
-  await getHomeHotData()
-  // await Promise.all([getHomeBannelData(), getHomeCategoryData(), getHomeHotData()])
+  // await getHomeBannelData()
+  // await getHomeCategoryData()
+  // await getHomeHotData()
+  await Promise.all([
+    getHomeBannelData(),
+    getHomeCategoryData(),
+    getHomeHotData(),
+    guessRef.value?.getMore(),
+  ])
   // 结束动画
   isTriggered.value = false
 }
