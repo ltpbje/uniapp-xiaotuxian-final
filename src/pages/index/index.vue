@@ -51,6 +51,7 @@ const onRefresherrefresh = async () => {
   await getHomeBannelData()
   await getHomeCategoryData()
   await getHomeHotData()
+  // await Promise.all([getHomeBannelData(), getHomeCategoryData(), getHomeHotData()])
   // 结束动画
   isTriggered.value = false
 }
