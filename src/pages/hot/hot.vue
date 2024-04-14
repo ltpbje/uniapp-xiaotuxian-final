@@ -7,6 +7,16 @@ const hotMap = [
   { type: '3', title: '一站买全', url: '/hot/oneStop' },
   { type: '4', title: '新鲜好物', url: '/hot/new' },
 ]
+// uniapp获取页面参数
+const query = defineProps<{
+  type: string
+}>()
+// console.log(query)
+const currUrlMap = hotMap.find((t) => t.type === query.type)
+// 动态设置标题
+uni.setNavigationBarTitle({
+  title: currUrlMap!.title,
+})
 </script>
 
 <template>
