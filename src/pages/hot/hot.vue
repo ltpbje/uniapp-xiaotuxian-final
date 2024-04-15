@@ -31,10 +31,29 @@ const activeIndex = ref(0)
 // 获取热门推荐数据
 const getHotRecommendData = async () => {
   const res = await getHotRecommendAPI(currUrlMap!.url)
-  console.log(res)
   bannerPicture.value = res.result.bannerPicture
   subType.value = res.result.subTypes
 }
+
+// 下拉刷新
+const onScrolltolower = async () => {
+  // 获取当前选项
+  const currsubType = subType.value[activeIndex.value]
+  // 当前页码累加
+  currsubType.goodsItems.page++
+  // 获取热门推荐下一页的数据
+  // 调用API传参
+  const res = await getHotRecommendAPI(currUrlMap!.url, {
+    page: currsubType.goodsItems.page,
+    pageSize: currsubType.goodsItems.pageSize,
+    subType: currsubType.id,
+  })
+  // 提取新数据
+  const newSubTypes = res.result.subTypes[activeIndex.value]
+  // 数组追加数据
+  currsubType.goodsItems.items.push(...newSubTypes.goodsItems.items)
+}
+
 // 页面加载时执行
 onLoad(() => {
   getHotRecommendData()
@@ -65,6 +84,7 @@ onLoad(() => {
       v-show="activeIndex === index"
       scroll-y
       class="scroll-view"
+      @scrolltolower="onScrolltolower"
     >
       <view class="goods">
         <navigator
