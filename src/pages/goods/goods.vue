@@ -33,6 +33,11 @@ const onTapImage = (url: string) => {
 onLoad(() => {
   getGoodsData()
 })
+const popup = ref<{
+  // open: (type?: 'top' | 'bottom' | 'center' | 'left' | 'right' | 'message' | 'dialog') => void
+  open: (type?: UniHelper.UniPopupType) => void
+  close: () => void
+}>()
 </script>
 
 <template>
@@ -73,7 +78,7 @@ onLoad(() => {
           <text class="label">送至</text>
           <text class="text ellipsis"> 请选择收获地址 </text>
         </view>
-        <view class="item arrow">
+        <view class="item arrow" @tap="popup?.open('bottom')">
           <text class="label">服务</text>
           <text class="text ellipsis"> 无忧退 快速退款 免费包邮 </text>
         </view>
@@ -143,6 +148,12 @@ onLoad(() => {
       <view class="buynow"> 立即购买 </view>
     </view>
   </view>
+  <!-- uni-ui弹出层 -->
+  <uni-popup ref="popup" type="bottom" background-color="#fff">
+    <view>内容1</view>
+    <view>内容2</view>
+    <button @tap="popup?.close()">关闭弹层</button>
+  </uni-popup>
 </template>
 
 <style lang="scss">
