@@ -8,6 +8,7 @@ import CategoryPanel from './components/CategoryPanel.vue'
 import HotPanel from './components/HotPanel.vue'
 import type { XtxGuessInstance } from '@/types/component'
 import PageSkeleton from './components/PageSkeleton.vue'
+import { useGuessList } from '@/composables'
 // 获取轮播图数据
 const bannelList = ref<BannerItem[]>([])
 const getHomeBannelData = async () => {
@@ -37,13 +38,14 @@ onLoad(async () => {
   await Promise.all([getHomeBannelData(), getHomeCategoryData(), getHomeHotData()])
   isLoading.value = false
 })
-// 获取猜你喜欢组件实例
-const guessRef = ref<XtxGuessInstance>()
-// 滚动触底
-const onScrolltoLower = () => {
-  console.log('触底了', guessRef)
-  guessRef.value?.getMore()
-}
+// // 获取猜你喜欢组件实例
+// const guessRef = ref<XtxGuessInstance>()
+// // 滚动触底
+// const onScrolltoLower = () => {
+//   console.log('触底了', guessRef)
+//   guessRef.value?.getMore()
+// }
+const { guessRef, onScrolltolower } = useGuessList()
 const isTriggered = ref(false)
 // 自定义下拉刷新被触发
 const onRefresherrefresh = async () => {
@@ -74,7 +76,7 @@ const onRefresherrefresh = async () => {
     refresher-enabled
     @refresherrefresh="onRefresherrefresh"
     :refresher-triggered="isTriggered"
-    @scrolltolower="onScrolltoLower"
+    @scrolltolower="onScrolltolower"
     class="scroll-view"
     scroll-y
   >

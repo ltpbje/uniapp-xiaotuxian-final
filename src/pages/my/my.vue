@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useMemberStore } from '@/stores'
+import { useGuessList } from '@/composables/index'
 
 // src/pages/my/my.vue
 // 获取屏幕边界到安全区域距离
@@ -11,11 +12,20 @@ const orderTypes = [
   { type: 3, text: '待收货', icon: 'icon-check' },
   { type: 4, text: '待评价', icon: 'icon-comment' },
 ]
+// 获取会员信息
 const memberStore = useMemberStore()
+
+const { guessRef, onScrolltolower } = useGuessList()
+// // 获取猜你喜欢组件实例
+// const guessRef = ref<XtxGuessInstance>()
+// // 滚动触底事件
+// const onScrolltolower = () => {
+//   guessRef.value?.getMore()
+// }
 </script>
 
 <template>
-  <scroll-view class="viewport" scroll-y enable-back-to-top>
+  <scroll-view @scrolltolower="onScrolltolower" class="viewport" scroll-y enable-back-to-top>
     <!-- 个人资料 -->
     <view class="profile" :style="{ paddingTop: safeAreaInsets!.top + 'px' }">
       <!-- 情况1：已登录 -->
