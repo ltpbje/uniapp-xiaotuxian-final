@@ -97,5 +97,30 @@
 				"selectedIconPath": "static/tabs/user_selected.png"
 			}
 		]
+	},
+	// 分包加载配置
+	"subPackages": [
+		{
+			// 子包的根目录
+			"root": "pagesMember",
+			// 子包由哪些页面组成
+			"pages": [
+				{
+					// 配置页面路径
+					"path": "settings/settings",
+					// 配置页面窗口表现
+					"style": {
+						"navigationBarTitleText": "设置"
+					}
+				}
+			]
+		}
+	],
+	// 分包预下载规则
+	"preloadRule": {
+		"pages/my/my":{
+			"network": "all",
+			"packages": ["pagesMember"]
+		}
 	}
 }
