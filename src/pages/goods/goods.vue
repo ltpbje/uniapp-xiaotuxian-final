@@ -6,6 +6,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import AddressPanel from './components/AddressPanel.vue'
 import ServicePanel from './components/ServicePanel.vue'
+import pageSkeleton from './components/pageSkeleton.vue'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 const query = defineProps<{
@@ -31,9 +32,13 @@ const onTapImage = (url: string) => {
     urls: goods.value!.mainPictures,
   })
 }
+//是否加载完成的标志
+const isFinished = ref(true)
 // 页面加载
-onLoad(() => {
-  getGoodsData()
+onLoad(async () => {
+  isFinished.value = false
+  await getGoodsData()
+  isFinished.value = true
 })
 // 打开弹出层
 const popup = ref<{
@@ -50,7 +55,8 @@ const openPopup = (name: typeof popupName.value) => {
 </script>
 
 <template>
-  <scroll-view scroll-y class="viewport">
+  <pageSkeleton v-if="!isFinished"></pageSkeleton>
+  <scroll-view v-else scroll-y class="viewport">
     <!-- 基本信息 -->
     <view class="goods">
       <!-- 商品主图 -->
