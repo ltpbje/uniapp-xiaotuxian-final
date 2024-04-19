@@ -23,6 +23,8 @@ const onGetphoneNumber: UniHelper.ButtonOnGetphonenumber = async (ev) => {
 }
 const onGetphonenumberSimple = async () => {
   const res = await postLoginWxMinSimpleAPI('19836788888')
+  // 测试渲染个人信息的手机号
+  // const res = await postLoginWxMinSimpleAPI('13123456789')
   loginSuccess(res.result)
 }
 // 登录成功处理函数
