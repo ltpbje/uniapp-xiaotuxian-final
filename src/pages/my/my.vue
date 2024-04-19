@@ -22,6 +22,7 @@ const { guessRef, onScrolltolower } = useGuessList()
 // const onScrolltolower = () => {
 //   guessRef.value?.getMore()
 // }
+console.log('头像', memberStore.profile?.avatar)
 </script>
 
 <template>
