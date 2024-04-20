@@ -1,5 +1,19 @@
 <script setup lang="ts">
-//
+import { getMemberAddressAPI } from '@/services/address'
+import type { AddressItem } from '@/types/address'
+import { onLoad } from '@dcloudio/uni-app'
+import { ref } from 'vue'
+
+// 获取收货地址列表数据
+const addressList = ref<AddressItem[]>()
+const getMemberAddressData = async () => {
+  const res = await getMemberAddressAPI()
+  addressList.value = res.result
+}
+// 初始化调用
+onLoad(() => {
+  getMemberAddressData()
+})
 </script>
 
 <template>
@@ -9,14 +23,14 @@
       <view v-if="true" class="address">
         <view class="address-list">
           <!-- 收货地址项 -->
-          <view class="item">
+          <view class="item" v-for="item in addressList" :key="item.id">
             <view class="item-content">
               <view class="user">
-                黑马小王子
-                <text class="contact">13111111111</text>
-                <text v-if="true" class="badge">默认</text>
+                {{ item.receiver }}
+                <text class="contact">{{ item.contact }}</text>
+                <text v-if="item.isDefault" class="badge">默认</text>
               </view>
-              <view class="locate">广东省 广州市 天河区 黑马程序员</view>
+              <view class="locate">{{ item.fullLocation }} {{ item.address }}</view>
               <navigator
                 class="edit"
                 hover-class="none"
