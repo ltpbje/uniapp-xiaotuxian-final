@@ -34,7 +34,6 @@ const onChangeAvatar = () => {
         name: 'file',
         filePath: tempFilePath,
         success: (res) => {
-          console.log(res)
           if (res.statusCode === 200) {
             const avatar = JSON.parse(res.data).result.avatar
             // 个人信息页数据更新
@@ -67,8 +66,25 @@ const onBirthdayChange: UniHelper.DatePickerOnChange = (ev) => {
   profile.value.birthday = ev.detail.value
 }
 
+// 修改城市
+const fullLocationCode = ref(['', '', ''])
+const onFullLocationChange: UniHelper.RegionPickerOnChange = (ev) => {
+  // 修改前端页面数据
+  profile.value.fullLocation = ev.detail.value.join(' ')
+  // 修改后端数据
+  fullLocationCode.value = ev.detail.code!
+}
+
 // 保存提交表单时
 const onSubmit = async () => {
+  // 只有当城市编码不会空时才提交城市编码更新
+  if (fullLocationCode.value!.join('') !== '') {
+    await putMemberProfileAPI({
+      provinceCode: fullLocationCode.value[0],
+      cityCode: fullLocationCode.value[1],
+      countyCode: fullLocationCode.value[2],
+    })
+  }
   const res = await putMemberProfileAPI({
     nickname: profile.value.nickname,
     gender: profile.value.gender,
@@ -142,7 +158,12 @@ const onSubmit = async () => {
         </view>
         <view class="form-item">
           <text class="label">城市</text>
-          <picker class="picker" mode="region" :value="profile?.fullLocation?.split(' ')">
+          <picker
+            @change="onFullLocationChange"
+            class="picker"
+            mode="region"
+            :value="profile?.fullLocation?.split(' ')"
+          >
             <view v-if="profile?.fullLocation">{{ profile.fullLocation }}</view>
             <view class="placeholder" v-else>请选择城市</view>
           </picker>
