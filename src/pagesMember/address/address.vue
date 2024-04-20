@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getMemberAddressAPI } from '@/services/address'
 import type { AddressItem } from '@/types/address'
-import { onLoad } from '@dcloudio/uni-app'
+import { onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 
 // 获取收货地址列表数据
@@ -10,8 +10,9 @@ const getMemberAddressData = async () => {
   const res = await getMemberAddressAPI()
   addressList.value = res.result
 }
+
 // 初始化调用
-onLoad(() => {
+onShow(() => {
   getMemberAddressData()
 })
 </script>
@@ -34,7 +35,7 @@ onLoad(() => {
               <navigator
                 class="edit"
                 hover-class="none"
-                :url="`/pagesMember/address-form/address-form?id=1`"
+                :url="`/pagesMember/address-form/address-form?id=${item.id}`"
               >
                 修改
               </navigator>

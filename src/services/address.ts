@@ -20,3 +20,15 @@ export const getMemberAddressAPI = () => {
     method: 'GET',
   })
 }
+
+/**
+ * 获取收货地址详情
+ * @param id 地址id(路径参数)
+ */
+
+export const getMemberAddressByIdAPI = (id: string) => {
+  return http<AddressItem>({
+    url: `/member/address/${id}`,
+    method: 'GET',
+  })
+}
