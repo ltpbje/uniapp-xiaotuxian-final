@@ -4,6 +4,7 @@ import {
   getMemberAddressAPI,
   getMemberAddressByIdAPI,
   postMemberAddressAPI,
+  putMemberAddressByIdAPI,
 } from '@/services/address'
 import { onLoad } from '@dcloudio/uni-app'
 // 表单数据
@@ -49,27 +50,51 @@ const onSwitchChange: UniHelper.SwitchOnChange = (ev) => {
   form.value.isDefault = ev.detail.value ? 1 : 0
 }
 
+// 表单校验规则
+const rules = {
+  receiver: {
+    rules: [
+      {
+        required: true,
+        errorMessage: '请输入收货人姓名',
+      },
+    ],
+  },
+}
+const formRef = ref<UniHelper.UniFormsInstance>()
 // 提交后台保存
 const onSubmit = async () => {
-  // 新建地址请求
-  const res = await postMemberAddressAPI(form.value)
-  // 成功提示
-  uni.showToast({ icon: 'success', title: '添加成功' })
-  // 返回上一页
-  setTimeout(() => {
-    uni.navigateBack()
-  }, 500)
+  try {
+    // 校验整个表单
+    await formRef.value?.validate?.()
+    if (query.id) {
+      // 修改地址请求
+      await putMemberAddressByIdAPI(query.id, form.value)
+    } else {
+      // 新建地址请求
+      const res = await postMemberAddressAPI(form.value)
+    }
+    // 成功提示
+    uni.showToast({ icon: 'success', title: query.id ? '修改成功' : '添加成功' })
+    // 返回上一页
+    setTimeout(() => {
+      uni.navigateBack()
+    }, 500)
+  } catch (error) {
+    // 错误提示
+    uni.showToast({ icon: 'error', title: '请填写完整信息' })
+  }
 }
 </script>
 
 <template>
   <view class="content">
-    <form>
+    <uni-forms ref="formRef" :model="form" :rules="rules">
       <!-- 表单内容 -->
-      <view class="form-item">
+      <uni-forms-item name="receiver" class="form-item">
         <text class="label">收货人</text>
         <input class="input" placeholder="请填写收货人姓名" v-model="form.receiver" />
-      </view>
+      </uni-forms-item>
       <view class="form-item">
         <text class="label">手机号码</text>
         <input class="input" placeholder="请填写收货人手机号码" v-model="form.contact" />
@@ -99,7 +124,7 @@ const onSubmit = async () => {
           :checked="form.isDefault === 1"
         />
       </view>
-    </form>
+    </uni-forms>
   </view>
   <!-- 提交按钮 -->
   <button @tap="onSubmit" class="button">保存并使用</button>
