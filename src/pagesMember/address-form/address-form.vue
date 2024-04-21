@@ -51,7 +51,7 @@ const onSwitchChange: UniHelper.SwitchOnChange = (ev) => {
 }
 
 // 表单校验规则
-const rules = {
+const rules: UniHelper.UniFormsRules = {
   receiver: {
     rules: [
       {
@@ -59,6 +59,21 @@ const rules = {
         errorMessage: '请输入收货人姓名',
       },
     ],
+  },
+  contact: {
+    rules: [
+      {
+        required: true,
+        errorMessage: '请输入联系方式',
+      },
+      { pattern: /^1[3-9]\d{9}$/, errorMessage: '手机号格式不正确' },
+    ],
+  },
+  fullLocation: {
+    rules: [{ required: true, errorMessage: '请选择所在地区' }],
+  },
+  address: {
+    rules: [{ required: true, errorMessage: '请选择详细地址' }],
   },
 }
 const formRef = ref<UniHelper.UniFormsInstance>()
@@ -95,11 +110,11 @@ const onSubmit = async () => {
         <text class="label">收货人</text>
         <input class="input" placeholder="请填写收货人姓名" v-model="form.receiver" />
       </uni-forms-item>
-      <view class="form-item">
+      <uni-forms-item name="contact" class="form-item">
         <text class="label">手机号码</text>
         <input class="input" placeholder="请填写收货人手机号码" v-model="form.contact" />
-      </view>
-      <view class="form-item">
+      </uni-forms-item>
+      <uni-forms-item name="fullLocation" class="form-item">
         <text class="label">所在地区</text>
         <picker
           @change="onRegionChange"
@@ -110,11 +125,11 @@ const onSubmit = async () => {
           <view v-if="form.fullLocation">{{ form.fullLocation }}</view>
           <view v-else class="placeholder">请选择省/市/区(县)</view>
         </picker>
-      </view>
-      <view class="form-item">
+      </uni-forms-item>
+      <uni-forms-item name="address" class="form-item">
         <text class="label">详细地址</text>
         <input class="input" placeholder="街道、楼牌号等信息" v-model="form.address" />
-      </view>
+      </uni-forms-item>
       <view class="form-item">
         <label class="label">设为默认地址</label>
         <switch
