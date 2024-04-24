@@ -1,13 +1,33 @@
 <script setup lang="ts">
-//
+import { getMemberCartAPI } from '@/services/cart'
+import { useMemberStore } from '@/stores'
+import type { CartItem } from '@/types/cart'
+import { onShow } from '@dcloudio/uni-app'
+import { ref } from 'vue'
+
+const memberStore = useMemberStore()
+// 购物车列表数据
+const cartList = ref<CartItem[]>()
+// 获取购物车数据
+const getMemberCartData = async () => {
+  const res = await getMemberCartAPI()
+  cartList.value = res.result
+}
+
+onShow(() => {
+  // 登录过的用户 才能获取购物车数据
+  if (memberStore.profile) {
+    getMemberCartData()
+  }
+})
 </script>
 
 <template>
   <scroll-view scroll-y class="scroll-view">
     <!-- 已登录: 显示购物车 -->
-    <template v-if="true">
+    <template v-if="memberStore.profile">
       <!-- 购物车列表 -->
-      <view class="cart-list" v-if="true">
+      <view class="cart-list" v-if="cartList?.length">
         <!-- 优惠提示 -->
         <view class="tips">
           <text class="label">满减</text>
@@ -16,13 +36,13 @@
         <!-- 滑动操作分区 -->
         <uni-swipe-action>
           <!-- 滑动操作项 -->
-          <uni-swipe-action-item v-for="item in 2" :key="item" class="cart-swipe">
+          <uni-swipe-action-item v-for="item in cartList" :key="item.skuId" class="cart-swipe">
             <!-- 商品信息 -->
             <view class="goods">
               <!-- 选中状态 -->
               <text class="checkbox" :class="{ checked: true }"></text>
               <navigator
-                :url="`/pages/goods/goods?id=1435025`"
+                :url="`/pages/goods/goods?id=${item.id}`"
                 hover-class="none"
                 class="navigator"
               >

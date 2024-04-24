@@ -35,9 +35,13 @@ const loginSuccess = (profile: LoginResult) => {
   // 成功提示
   uni.showToast({ icon: 'success', title: '登录成功' })
   setTimeout(() => {
-    // 切换到我的页面
-    uni.switchTab({ url: '/pages/my/my' })
+    // 回退到上一个页面
+    uni.navigateBack()
   }, 500)
+  // setTimeout(() => {
+  //   // 切换到我的页面
+  //   uni.switchTab({ url: '/pages/my/my' })
+  // }, 500)
 }
 </script>
 
