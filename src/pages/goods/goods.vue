@@ -116,6 +116,8 @@ const onAddCart = async (ev: SkuPopupEvent) => {
   await postMemberCart({ skuId: ev._id, count: ev.buy_num })
   // 显示成功提示
   uni.showToast({ title: '添加成功', icon: 'success' })
+  // 关闭sku弹层
+  isShowSku.value = false
 }
 </script>
 
