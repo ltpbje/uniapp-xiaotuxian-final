@@ -46,21 +46,17 @@ onShow(() => {
                 hover-class="none"
                 class="navigator"
               >
-                <image
-                  mode="aspectFill"
-                  class="picture"
-                  src="https://yanxuan-item.nosdn.127.net/da7143e0103304f0f3230715003181ee.jpg"
-                ></image>
+                <image mode="aspectFill" class="picture" :src="item.picture"></image>
                 <view class="meta">
-                  <view class="name ellipsis">人手必备，儿童轻薄透气防蚊裤73-140cm</view>
-                  <view class="attrsText ellipsis">黄色小象 140cm</view>
-                  <view class="price">69.00</view>
+                  <view class="name ellipsis">{{ item.name }}</view>
+                  <view class="attrsText ellipsis">{{ item.attrsText }}</view>
+                  <view class="price">{{ item.price }}</view>
                 </view>
               </navigator>
               <!-- 商品数量 -->
               <view class="count">
                 <text class="text">-</text>
-                <input class="input" type="number" value="1" />
+                <input class="input" type="number" :value="item.count.toString()" />
                 <text class="text">+</text>
               </view>
             </view>
