@@ -4,7 +4,7 @@ import { deleteMemberCartAPI, getMemberCartAPI, putMemberCartBySkuIdAPI } from '
 import { useMemberStore } from '@/stores'
 import type { CartItem } from '@/types/cart'
 import { onShow } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 const memberStore = useMemberStore()
 // 购物车列表数据
@@ -30,10 +30,23 @@ const onDeleteCart = (skuId: string) => {
     },
   })
 }
+// 改变购物车商品数量时
 const onChangeCount = (ev: InputNumberBoxEvent) => {
   console.log(ev)
   putMemberCartBySkuIdAPI(ev.index, { count: ev.value })
 }
+// 修改选中状态-单品修改
+const onChangeSelected = (item: CartItem) => {
+  // 前端数据更新-是否选中取反
+  item.selected = !item.selected
+  // 后端数据更新
+  putMemberCartBySkuIdAPI(item.skuId, { selected: item.selected })
+}
+
+// 计算全选状态
+const isSelectedAll = computed(() => {
+  return cartList.value?.every((v) => {})
+})
 onShow(() => {
   // 登录过的用户 才能获取购物车数据
   if (memberStore.profile) {
@@ -60,7 +73,11 @@ onShow(() => {
             <!-- 商品信息 -->
             <view class="goods">
               <!-- 选中状态 -->
-              <text class="checkbox" :class="{ checked: true }"></text>
+              <text
+                @tap="onChangeSelected(item)"
+                class="checkbox"
+                :class="{ checked: true }"
+              ></text>
               <navigator
                 :url="`/pages/goods/goods?id=${item.id}`"
                 hover-class="none"
