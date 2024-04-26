@@ -108,10 +108,13 @@ const gotoPayment = () => {
     title: '等待完成',
   })
 }
+// 猜你喜欢组件实例
+import { useGuessList } from '@/composables/index'
+const { guessRef, onScrolltolower } = useGuessList()
 </script>
 
 <template>
-  <scroll-view scroll-y class="scroll-view">
+  <scroll-view @scrolltolower="onScrolltolower" scroll-y class="scroll-view">
     <!-- 已登录: 显示购物车 -->
     <template v-if="memberStore.profile">
       <!-- 购物车列表 -->
