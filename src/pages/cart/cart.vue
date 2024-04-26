@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import type { InputNumberBoxEvent } from '@/components/vk-data-input-number-box/vk-data-input-number-box'
-import { deleteMemberCartAPI, getMemberCartAPI, putMemberCartBySkuIdAPI } from '@/services/cart'
+import {
+  deleteMemberCartAPI,
+  getMemberCartAPI,
+  putMemberCartBySkuIdAPI,
+  putmemberCartSelectedAPI,
+} from '@/services/cart'
 import { useMemberStore } from '@/stores'
 import type { CartItem } from '@/types/cart'
 import { onShow } from '@dcloudio/uni-app'
@@ -45,8 +50,26 @@ const onChangeSelected = (item: CartItem) => {
 
 // 计算全选状态
 const isSelectedAll = computed(() => {
-  return cartList.value?.every((v) => {})
+  return (
+    cartList.value?.length &&
+    cartList.value?.every((v) => {
+      return v.selected
+    })
+  )
 })
+
+// 修改选中状态-全选修改
+// 当点击全选按钮时
+const onChangeSelectedAll = () => {
+  // 全选状态取反
+  const _isSelectedAll = !isSelectedAll.value
+  // 前端数据更新
+  cartList.value?.forEach((item) => {
+    item.selected = _isSelectedAll
+  })
+  // 更新后台数据
+  putmemberCartSelectedAPI({ selected: _isSelectedAll })
+}
 onShow(() => {
   // 登录过的用户 才能获取购物车数据
   if (memberStore.profile) {
@@ -76,7 +99,7 @@ onShow(() => {
               <text
                 @tap="onChangeSelected(item)"
                 class="checkbox"
-                :class="{ checked: true }"
+                :class="{ checked: item.selected }"
               ></text>
               <navigator
                 :url="`/pages/goods/goods?id=${item.id}`"
@@ -122,7 +145,7 @@ onShow(() => {
       </view>
       <!-- 吸底工具栏 -->
       <view class="toolbar">
-        <text class="all" :class="{ checked: true }">全选</text>
+        <text @tap="onChangeSelectedAll" class="all" :class="{ checked: isSelectedAll }">全选</text>
         <text class="text">合计:</text>
         <text class="amount">100</text>
         <view class="button-grounp">
