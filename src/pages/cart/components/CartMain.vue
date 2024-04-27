@@ -91,7 +91,9 @@ const selectedCartListcount = computed(() => {
 
 // 计算商品的总价格
 const selectedCartListMoney = computed(() => {
-  return selectedCartList.value?.reduce((sum, item) => sum + item.count * item.nowPrice, 0)
+  return selectedCartList.value
+    ?.reduce((sum, item) => sum + item.count * item.nowPrice, 0)
+    .toFixed(2)
 })
 
 // 结算按钮
