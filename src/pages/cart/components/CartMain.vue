@@ -106,9 +106,10 @@ const gotoPayment = () => {
     })
   }
   // 跳转到结算页面
-  uni.showToast({
-    title: '等待完成',
-  })
+  // uni.showToast({
+  //   title: '等待完成',
+  // })
+  uni.navigateTo({ url: '/pagesOrder/create/create' })
 }
 // 猜你喜欢组件实例
 import { useGuessList } from '@/composables/index'
