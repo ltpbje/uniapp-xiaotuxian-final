@@ -111,6 +111,8 @@ const gotoPayment = () => {
 // 猜你喜欢组件实例
 import { useGuessList } from '@/composables/index'
 const { guessRef, onScrolltolower } = useGuessList()
+// 获取屏幕边界到安全区域距离
+const { safeAreaInsets } = uni.getSystemInfoSync()
 </script>
 
 <template>
@@ -179,7 +181,7 @@ const { guessRef, onScrolltolower } = useGuessList()
         </navigator>
       </view>
       <!-- 吸底工具栏 -->
-      <view class="toolbar">
+      <view class="toolbar" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
         <text @tap="onChangeSelectedAll" class="all" :class="{ checked: isSelectedAll }">全选</text>
         <text class="text">合计:</text>
         <text class="amount">{{ selectedCartListMoney }}</text>
@@ -221,6 +223,7 @@ const { guessRef, onScrolltolower } = useGuessList()
 // 滚动容器
 .scroll-view {
   flex: 1;
+  padding-bottom: var(--window-bottom);
 }
 
 // 购物车列表
