@@ -20,11 +20,14 @@ const getMemberAddressData = async () => {
   addressList.value = res.result
 }
 getMemberAddressData()
+const isFirst = ref(true)
 // 当点击选择地址
 const onSelectAddress = (item: AddressItem) => {
   // 将选中地址存入父组件pinia地址仓库
   // addressStore.changeSelectedAddress(item)
   emit('changeSelectedAddress', item)
+  isFirst.value = false
+  emit('close')
 }
 
 // 新建地址
@@ -47,20 +50,10 @@ const toCreateAddress = () => {
         <text
           class="icon"
           :class="{
-            'icon-checked': selectedAddress?.id === item.id || item.isDefault,
-            'icon-ring': !(selectedAddress?.id === item.id || item.isDefault),
+            'icon-checked': selectedAddress?.id === item.id || (item.isDefault && isFirst),
+            'icon-ring': !(selectedAddress?.id === item.id || (item.isDefault && isFirst)),
           }"
         ></text>
-      </view>
-      <view class="item">
-        <view class="user">王东 13824686868</view>
-        <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
-        <text class="icon icon-ring"></text>
-      </view>
-      <view class="item">
-        <view class="user">张三 13824686868</view>
-        <view class="address">北京市朝阳区孙河安平北街6号院</view>
-        <text class="icon icon-ring"></text>
       </view>
     </view>
     <view class="footer">

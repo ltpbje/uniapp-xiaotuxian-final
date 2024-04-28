@@ -130,6 +130,7 @@ const onBuyNow = (ev: SkuPopupEvent) => {
 
 const addressStore = useAddressStore()
 console.log(addressStore.selectedAddress)
+// 改变pinia地址信息
 const changeAddress = (item: AddressItem) => {
   addressStore.changeSelectedAddress(item)
 }
