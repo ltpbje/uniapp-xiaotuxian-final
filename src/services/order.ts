@@ -10,3 +10,19 @@ export const getMemberOrderPreAPI = () => {
     method: 'GET',
   })
 }
+
+/**
+ * 填写订单-获取立即购买订单
+ */
+export const getMemberOrderPreNowAPI = (data: {
+  skuId: string
+  count: string
+  // 下单时已经选择好的地址id
+  addressId?: string
+}) => {
+  return http<OrderPreResult>({
+    url: '/member/order/pre/now',
+    method: 'GET',
+    data,
+  })
+}
