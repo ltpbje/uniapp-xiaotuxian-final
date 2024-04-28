@@ -14,6 +14,8 @@ import type {
 } from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
 import { computed } from 'vue'
 import { postMemberCart } from '@/services/cart'
+import { useAddressStore } from '@/stores/modules/address'
+import type { AddressItem } from '@/types/address'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 const query = defineProps<{
@@ -124,6 +126,12 @@ const onBuyNow = (ev: SkuPopupEvent) => {
   uni.navigateTo({
     url: `/pagesOrder/create/create?skuId=${ev._id}&count=${ev.buy_num}`,
   })
+}
+
+const addressStore = useAddressStore()
+console.log(addressStore.selectedAddress)
+const changeAddress = (item: AddressItem) => {
+  addressStore.changeSelectedAddress(item)
 }
 </script>
 
@@ -255,7 +263,12 @@ const onBuyNow = (ev: SkuPopupEvent) => {
   <!-- uni-ui弹出层 -->
   <uni-popup ref="popup" type="bottom" background-color="#fff">
     <!-- 监听子组件的close事件 -->
-    <AddressPanel @close="popup?.close()" v-if="popupName === 'address'"></AddressPanel>
+    <AddressPanel
+      :selectedAddress="addressStore.selectedAddress"
+      @changeSelectedAddress="changeAddress"
+      @close="popup?.close()"
+      v-if="popupName === 'address'"
+    ></AddressPanel>
     <ServicePanel @close="popup?.close()" v-if="popupName === 'service'"></ServicePanel>
   </uni-popup>
 </template>

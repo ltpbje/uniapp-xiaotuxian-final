@@ -1,6 +1,36 @@
 <script setup lang="ts">
+import { useAddressStore } from '@/stores/modules/address'
+import { ref } from 'vue'
+import type { AddressItem } from '@/types/address'
+import { getMemberAddressAPI } from '@/services/address'
 // 子调父
-const emit = defineEmits<{ (event: 'close'): void }>()
+const emit = defineEmits<{
+  (event: 'close'): void
+  (event: 'changeSelectedAddress', item: AddressItem): void
+}>()
+const addressStore = defineProps<{
+  selectedAddress?: AddressItem
+}>()
+console.log(addressStore.selectedAddress)
+
+const addressList = ref<AddressItem[]>()
+// 获取用户地址列表数据
+const getMemberAddressData = async () => {
+  const res = await getMemberAddressAPI()
+  addressList.value = res.result
+}
+getMemberAddressData()
+// 当点击选择地址
+const onSelectAddress = (item: AddressItem) => {
+  // 将选中地址存入父组件pinia地址仓库
+  // addressStore.changeSelectedAddress(item)
+  emit('changeSelectedAddress', item)
+}
+
+// 新建地址
+const toCreateAddress = () => {
+  uni.navigateTo({ url: '/pagesMember/address-form/address-form' })
+}
 </script>
 
 <template>
@@ -11,10 +41,16 @@ const emit = defineEmits<{ (event: 'close'): void }>()
     <view class="title">配送至</view>
     <!-- 内容 -->
     <view class="content">
-      <view class="item">
-        <view class="user">李明 13824686868</view>
-        <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
-        <text class="icon icon-checked"></text>
+      <view class="item" @tap="onSelectAddress(item)" v-for="item in addressList" :key="item.id">
+        <view class="user">{{ item.receiver }} {{ item.contact }}</view>
+        <view class="address">{{ item.fullLocation }} {{ item.address }}</view>
+        <text
+          class="icon"
+          :class="{
+            'icon-checked': selectedAddress?.id === item.id || item.isDefault,
+            'icon-ring': !(selectedAddress?.id === item.id || item.isDefault),
+          }"
+        ></text>
       </view>
       <view class="item">
         <view class="user">王东 13824686868</view>
@@ -28,7 +64,7 @@ const emit = defineEmits<{ (event: 'close'): void }>()
       </view>
     </view>
     <view class="footer">
-      <view class="button primary"> 新建地址 </view>
+      <view class="button primary" @tap="toCreateAddress"> 新建地址 </view>
       <view v-if="false" class="button primary">确定</view>
     </view>
   </view>
