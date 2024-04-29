@@ -10,16 +10,17 @@ const emit = defineEmits<{
 }>()
 const addressStore = defineProps<{
   selectedAddress?: AddressItem
+  addressList: AddressItem[]
 }>()
 console.log(addressStore.selectedAddress)
 
-const addressList = ref<AddressItem[]>()
-// 获取用户地址列表数据
-const getMemberAddressData = async () => {
-  const res = await getMemberAddressAPI()
-  addressList.value = res.result
-}
-getMemberAddressData()
+// // const addressList = ref<AddressItem[]>()
+// // // 获取用户地址列表数据
+// // const getMemberAddressData = async () => {
+// //   const res = await getMemberAddressAPI()
+// //   addressList.value = res.result
+// // }
+// getMemberAddressData()
 const isFirst = ref(true)
 // 当点击选择地址
 const onSelectAddress = (item: AddressItem) => {
@@ -44,7 +45,12 @@ const toCreateAddress = () => {
     <view class="title">配送至</view>
     <!-- 内容 -->
     <view class="content">
-      <view class="item" @tap="onSelectAddress(item)" v-for="item in addressList" :key="item.id">
+      <view
+        class="item"
+        @tap="onSelectAddress(item)"
+        v-for="item in addressStore.addressList"
+        :key="item.id"
+      >
         <view class="user">{{ item.receiver }} {{ item.contact }}</view>
         <view class="address">{{ item.fullLocation }} {{ item.address }}</view>
         <text

@@ -16,6 +16,7 @@ import { computed } from 'vue'
 import { postMemberCart } from '@/services/cart'
 import { useAddressStore } from '@/stores/modules/address'
 import type { AddressItem } from '@/types/address'
+import { getMemberAddressAPI } from '@/services/address'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 const query = defineProps<{
@@ -70,7 +71,7 @@ const isFinished = ref(true)
 // 页面加载
 onLoad(async () => {
   isFinished.value = false
-  await getGoodsData()
+  await Promise.all([getGoodsData(), getMemberAddressData()])
   isFinished.value = true
 })
 // 打开弹出层
@@ -134,6 +135,13 @@ console.log(addressStore.selectedAddress)
 const changeAddress = (item: AddressItem) => {
   addressStore.changeSelectedAddress(item)
 }
+
+// 获取用户地址列表数据
+const addressList = ref<AddressItem[]>()
+const getMemberAddressData = async () => {
+  const res = await getMemberAddressAPI()
+  addressList.value = res.result
+}
 </script>
 
 <template>
@@ -189,7 +197,15 @@ const changeAddress = (item: AddressItem) => {
         </view>
         <view class="item arrow" @tap="openPopup('address')">
           <text class="label">送至</text>
-          <text class="text ellipsis"> 请选择收货地址</text>
+          <text class="text ellipsis">
+            {{
+              addressStore.selectedAddress
+                ? addressStore.selectedAddress.fullLocation +
+                  ' ' +
+                  addressStore.selectedAddress.address
+                : '请选择收货地址'
+            }}</text
+          >
         </view>
         <view class="item arrow" @tap="openPopup('service')">
           <text class="label">服务</text>
@@ -266,6 +282,7 @@ const changeAddress = (item: AddressItem) => {
     <!-- 监听子组件的close事件 -->
     <AddressPanel
       :selectedAddress="addressStore.selectedAddress"
+      :addressList="addressList as AddressItem[]"
       @changeSelectedAddress="changeAddress"
       @close="popup?.close()"
       v-if="popupName === 'address'"
