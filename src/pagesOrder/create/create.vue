@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getMemberOrderPreAPI, getMemberOrderPreNowAPI } from '@/services/order'
+import { getMemberOrderPreAPI, getMemberOrderPreNowAPI, postMemberOrderAPI } from '@/services/order'
 import type { OrderPreResult } from '@/types/order'
 import { onLoad } from '@dcloudio/uni-app'
 import { computed, ref } from 'vue'
@@ -32,24 +32,33 @@ const query = defineProps<{
 // 获取订单信息
 const orderPre = ref<OrderPreResult>()
 const getMemberOrderPreData = async () => {
-  if (query.skuId && query.count) {
+  if (query.skuId && query.count && !query.addressId) {
     const res = await getMemberOrderPreNowAPI({
       skuId: query.skuId,
       count: query.count,
     })
     orderPre.value = res.result
+    return
   }
-  if (query.addressId && query.skuId && query.count) {
+  if (query.addressId) {
     const res = await getMemberOrderPreNowAPI({
-      skuId: query.skuId,
-      count: query.count,
+      skuId: query.skuId!,
+      count: query.count!,
       addressId: query.addressId,
     })
     orderPre.value = res.result
-  } else {
-    const res = await getMemberOrderPreAPI()
-    orderPre.value = res.result
+    return
   }
+  // if (query.addressId && query.skuId && query.count) {
+  //   const res = await getMemberOrderPreNowAPI({
+  //     skuId: query.skuId,
+  //     count: query.count,
+  //     addressId: query.addressId,
+  //   })
+  //   orderPre.value = res.result
+  // }
+  const res = await getMemberOrderPreAPI()
+  orderPre.value = res.result
 }
 onLoad(() => {
   getMemberOrderPreData()
@@ -62,6 +71,24 @@ const selecteAddress = computed(() => {
     addressStore.selectedAddress || orderPre.value?.userAddresses.find((v) => v.isDefault === 1)
   )
 })
+// 提交订单
+const onOrderSubmit = async () => {
+  if (!selecteAddress.value) {
+    return uni.showToast({ icon: 'none', title: '请选择收货地址' })
+  }
+  // 发送提交订单请求
+  const res = await postMemberOrderAPI({
+    addressId: selecteAddress.value.id,
+    buyerMessage: buyerMessage.value,
+    deliveryTimeType: activeDelivery.value.type,
+    goods: orderPre.value!.goods.map((v) => ({ count: v.count, skuId: v.skuId })),
+    payChannel: 2,
+    payType: 1,
+  })
+  console.log(res)
+  // 关闭 当前页面 跳转到订单详情页面 传递订单ID
+  uni.redirectTo({ url: `/pagesOrder/detail/detail?id=${res.result.id}` })
+}
 </script>
 
 <template>
@@ -148,7 +175,9 @@ const selecteAddress = computed(() => {
     <view class="total-pay symbol">
       <text class="number">{{ orderPre?.summary.totalPayPrice.toFixed(2) }}</text>
     </view>
-    <view class="button" :class="{ disabled: true }"> 提交订单 </view>
+    <view class="button" @tap="onOrderSubmit" :class="{ disabled: !selecteAddress?.id }">
+      提交订单
+    </view>
   </view>
 </template>
 
