@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { getHomeByIdAPI } from '@/services/goods'
 import type { GoodsResult } from '@/types/goods'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import AddressPanel from './components/AddressPanel.vue'
 import ServicePanel from './components/ServicePanel.vue'
@@ -124,9 +124,15 @@ const onAddCart = async (ev: SkuPopupEvent) => {
 }
 // 立即购买
 const onBuyNow = (ev: SkuPopupEvent) => {
-  uni.navigateTo({
-    url: `/pagesOrder/create/create?skuId=${ev._id}&count=${ev.buy_num}`,
-  })
+  if (!addressStore.selectedAddress) {
+    uni.navigateTo({
+      url: `/pagesOrder/create/create?skuId=${ev._id}&count=${ev.buy_num}`,
+    })
+  } else {
+    uni.navigateTo({
+      url: `/pagesOrder/create/create?skuId=${ev._id}&count=${ev.buy_num}&addressId=${addressStore.selectedAddress.id}`,
+    })
+  }
 }
 
 const addressStore = useAddressStore()
@@ -142,6 +148,10 @@ const getMemberAddressData = async () => {
   const res = await getMemberAddressAPI()
   addressList.value = res.result
 }
+onShow(() => {
+  // 显示goods页面时将选中的地址清除
+  addressStore.selectedAddress = undefined
+})
 </script>
 
 <template>

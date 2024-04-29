@@ -27,6 +27,7 @@ const onChangeDelivery: UniHelper.SelectorPickerOnChange = (ev) => {
 const query = defineProps<{
   skuId?: string
   count?: string
+  addressId?: string
 }>()
 // 获取订单信息
 const orderPre = ref<OrderPreResult>()
@@ -35,6 +36,14 @@ const getMemberOrderPreData = async () => {
     const res = await getMemberOrderPreNowAPI({
       skuId: query.skuId,
       count: query.count,
+    })
+    orderPre.value = res.result
+  }
+  if (query.addressId && query.skuId && query.count) {
+    const res = await getMemberOrderPreNowAPI({
+      skuId: query.skuId,
+      count: query.count,
+      addressId: query.addressId,
     })
     orderPre.value = res.result
   } else {
