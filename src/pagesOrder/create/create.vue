@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { getMemberOrderPreAPI, getMemberOrderPreNowAPI, postMemberOrderAPI } from '@/services/order'
+import {
+  getMemberOrderPreAPI,
+  getMemberOrderPreNowAPI,
+  postMemberOrderAPI,
+  getMemberOrderRepurchaseByIDAPI,
+} from '@/services/order'
 import type { OrderPreResult } from '@/types/order'
 import { onLoad } from '@dcloudio/uni-app'
 import { computed, ref } from 'vue'
@@ -28,6 +33,7 @@ const query = defineProps<{
   skuId?: string
   count?: string
   addressId?: string
+  orderId?: string
 }>()
 // 获取订单信息
 const orderPre = ref<OrderPreResult>()
@@ -46,6 +52,11 @@ const getMemberOrderPreData = async () => {
       count: query.count!,
       addressId: query.addressId,
     })
+    orderPre.value = res.result
+    return
+  }
+  if (query.orderId) {
+    const res = await getMemberOrderRepurchaseByIDAPI(query.orderId)
     orderPre.value = res.result
     return
   }

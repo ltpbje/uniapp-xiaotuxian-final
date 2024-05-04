@@ -56,3 +56,13 @@ export const getMemberOrderByIDAPI = (id: string) => {
     method: 'GET',
   })
 }
+
+// 会员中心 - 订单管理
+// 填写订单 - 获取再次购买订单
+// GET / member / order / repurchase / { id }
+export const getMemberOrderRepurchaseByIDAPI = (id: string) => {
+  return http<OrderPreResult>({
+    url: `/member/order/repurchase/${id}`,
+    method: 'GET',
+  })
+}
