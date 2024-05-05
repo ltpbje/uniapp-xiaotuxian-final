@@ -5,7 +5,11 @@ import { onLoad, onReady } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import { OrderState, orderStateList } from '@/services/constant'
 import { getMemberOrderByIDAPI } from '@/services/order'
-import { getPayMockAPI, getPayWxPayMiniPayAPI } from '@/services/pay'
+import {
+  getMemberOrderConsignmentByIdAPI,
+  getPayMockAPI,
+  getPayWxPayMiniPayAPI,
+} from '@/services/pay'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 // 猜你喜欢
@@ -94,6 +98,26 @@ const onOrderPay = async () => {
   // 关闭当前页 再跳转到支付结果页
   uni.redirectTo({ url: `/pagesOrder/payment/payment?id=${query.id}` })
 }
+
+// 是否为开发环境
+const isDev = import.meta.env.DEV
+
+// 点击模拟发货
+const onOrderSend = async () => {
+  // 在开发环境下使用，打包到生产环境会剔除以下代码（tree shaking 树摇优化)
+  if (isDev) {
+    // 调用模拟发货
+    await getMemberOrderConsignmentByIdAPI(query.id)
+    // 提示发货完成
+    uni.showToast({
+      title: '发货完成',
+      icon: 'success',
+      mask: true,
+    })
+    // 手动修改发货状态
+    order.value!.orderState = OrderState.DaiShouHuo
+  }
+}
 </script>
 
 <template>
@@ -144,7 +168,14 @@ const onOrderPay = async () => {
               再次购买
             </navigator>
             <!-- 待发货状态：模拟发货,开发期间使用,用于修改订单状态为已发货 -->
-            <view v-if="false" class="button"> 模拟发货 </view>
+            <view
+              v-if="isDev && order.orderState == OrderState.DaiFaHuo"
+              @tap="onOrderSend"
+              class="button"
+            >
+              模拟发货
+            </view>
+            <view v-if="false" class="button"> 确认收货 </view>
           </view>
         </template>
       </view>
