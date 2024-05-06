@@ -11,8 +11,12 @@ const orderTabs = ref([
   { orderState: 3, title: '待收货' },
   { orderState: 4, title: '待评价' },
 ])
+// 接收页面参数
+const query = defineProps<{
+  type: string
+}>()
 // 高亮下标
-const activeIndex = ref(0)
+const activeIndex = ref(orderTabs.value.findIndex((v) => v.orderState === +query.type))
 </script>
 
 <template>
@@ -25,7 +29,7 @@ const activeIndex = ref(0)
         :key="item.title"
         @tap="activeIndex = index"
       >
-        待付款
+        {{ item.title }}
       </text>
       <!-- 游标 -->
       <view class="cursor" :style="{ left: activeIndex * 20 + '%' }"></view>
