@@ -9,6 +9,7 @@ import {
   putMemberOrderReceiptByIdAPI,
   getMemberOrderLogisticsByIdAPI,
   deleteMemberOrderAPI,
+  getMemberOrderCancelByIdAPI,
 } from '@/services/order'
 import {
   getMemberOrderConsignmentByIdAPI,
@@ -166,10 +167,18 @@ const onOrderDelete = () => {
     success: async (success) => {
       if (success.confirm) {
         await deleteMemberOrderAPI({ ids: [query.id] })
+        // 跳转到订单列表页
         uni.redirectTo({ url: '/pagesOrder/list/list' })
       }
     },
   })
+}
+// 取消订单。
+const onCancelOrder = async () => {
+  // 仅在订单状态为待付款时，可取消订单。
+  await getMemberOrderCancelByIdAPI(query.id, { cancelReason: reason.value })
+  // 跳转到订单列表页
+  uni.redirectTo({ url: '/pagesOrder/list/list' })
 }
 </script>
 
@@ -366,7 +375,7 @@ const onOrderDelete = () => {
       </view>
       <view class="footer">
         <view class="button" @tap="popup?.close?.()">取消</view>
-        <view class="button primary">确认</view>
+        <view class="button primary" @tap="onCancelOrder">确认</view>
       </view>
     </view>
   </uni-popup>
