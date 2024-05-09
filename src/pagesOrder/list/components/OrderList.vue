@@ -42,33 +42,30 @@ onMounted(() => {
       </view>
       <!-- 商品信息，点击商品跳转到订单详情，不是商品详情 -->
       <navigator
-        v-for="sku in 2"
-        :key="sku"
+        v-for="item in order.skus"
+        :key="item.id"
         class="goods"
-        :url="`/pagesOrder/detail/detail?id=1`"
+        :url="`/pagesOrder/detail/detail?id=${order.id}`"
         hover-class="none"
       >
         <view class="cover">
-          <image
-            mode="aspectFit"
-            src="https://yanxuan-item.nosdn.127.net/c07edde1047fa1bd0b795bed136c2bb2.jpg"
-          ></image>
+          <image mode="aspectFit" :src="item.image"></image>
         </view>
         <view class="meta">
-          <view class="name ellipsis">ins风小碎花泡泡袖衬110-160cm</view>
-          <view class="type">藏青小花 130</view>
+          <view class="name ellipsis">{{ item.name }}</view>
+          <view class="type">{{ item.attrsText }}</view>
         </view>
       </navigator>
       <!-- 支付信息 -->
       <view class="payment">
-        <text class="quantity">共5件商品</text>
+        <text class="quantity">共{{ order.totalNum }}件商品</text>
         <text>实付</text>
-        <text class="amount"> <text class="symbol">¥</text>99</text>
+        <text class="amount"> <text class="symbol">¥</text>{{ order.payMoney }}</text>
       </view>
       <!-- 订单操作按钮 -->
       <view class="action">
         <!-- 待付款状态：显示去支付按钮 -->
-        <template v-if="true">
+        <template v-if="order.orderState === OrderState.DaiFuKuan">
           <view class="button primary">去支付</view>
         </template>
         <template v-else>
@@ -80,7 +77,9 @@ onMounted(() => {
             再次购买
           </navigator>
           <!-- 待收货状态: 展示确认收货 -->
-          <view v-if="false" class="button primary">确认收货</view>
+          <view v-if="order.orderState === OrderState.DaiShouHuo" class="button primary"
+            >确认收货</view
+          >
         </template>
       </view>
     </view>
