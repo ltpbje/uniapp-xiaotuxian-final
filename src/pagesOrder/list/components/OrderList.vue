@@ -3,6 +3,7 @@ import { getMemberOrderAPI } from '@/services/order'
 import type { OrderItem, OrderListParams } from '@/types/order'
 import { onMounted, ref } from 'vue'
 import { orderStateList, OrderState } from '@/services/constant'
+import { getPayMockAPI, getPayWxPayMiniPayAPI } from '@/services/pay'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 // 定义props
@@ -13,7 +14,7 @@ const props = defineProps<{
 // 准备请求参数
 const queryParams: OrderListParams = {
   page: 1,
-  pageSize: 5,
+  pageSize: 10,
   orderState: props.orderState,
 }
 
@@ -22,6 +23,22 @@ const orderList = ref<OrderItem[]>([])
 const getMemberOrderData = async () => {
   const res = await getMemberOrderAPI(queryParams)
   orderList.value = res.result.items
+}
+
+// 订单支付
+const onOrderPay = async (id: string) => {
+  if (import.meta.env.DEV) {
+    await getPayMockAPI({ orderId: id })
+  } else {
+    // 正式环境微信支付
+    const res = await getPayWxPayMiniPayAPI({ orderId: id })
+    wx.requestPayment(res.result)
+  }
+  // 成功提示
+  uni.showToast({ title: '支付成功' })
+  // 更新订单状态
+  const order = orderList.value.find((v) => v.id === id)
+  order!.orderState = OrderState.DaiFaHuo
 }
 // 组件挂载时调用
 onMounted(() => {
@@ -71,8 +88,9 @@ onMounted(() => {
         <template v-else>
           <navigator
             class="button secondary"
-            :url="`/pagesOrder/create/create?orderId=id`"
+            :url="`/pagesOrder/create/create?orderId=${order.id}`"
             hover-class="none"
+            @tap="onOrderPay(order.id)"
           >
             再次购买
           </navigator>
