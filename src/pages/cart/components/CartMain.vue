@@ -422,6 +422,8 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
   left: 0;
   right: 0;
   bottom: var(--window-bottom);
+  //错误的 不同端的视口大小不一样
+  //bottom: 0
   z-index: 1;
 
   height: 100rpx;
