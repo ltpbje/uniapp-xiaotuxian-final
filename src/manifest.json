@@ -56,6 +56,13 @@
     },
     "usingComponents": true
   },
+  /* 网页端特有配置 */
+  "h5": {
+    "router": {
+      // 基础路径：./ 为相对路径
+      "base": "./"
+    }
+  },
   "mp-alipay": {
     "usingComponents": true
   },

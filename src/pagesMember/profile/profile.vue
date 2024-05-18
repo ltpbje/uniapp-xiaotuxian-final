@@ -12,6 +12,9 @@ const profile = ref({} as ProfileDetail)
 const getMemberProfileData = async () => {
   const res = await getMemberProfileAPI()
   profile.value = res.result
+  // 同步 Store 的头像和昵称，用于我的页面展示
+  memberStore.profile!.avatar = res.result.avatar
+  memberStore.profile!.nickname = res.result.nickname
 }
 onLoad(() => {
   getMemberProfileData()
@@ -19,6 +22,8 @@ onLoad(() => {
 const memberStore = useMemberStore()
 // 修改头像
 const onChangeAvatar = () => {
+  // #ifdef MP-WEIXIN
+
   // 拍摄或从手机相册中选择图片或视频。
   uni.chooseMedia({
     // 最多可以选择的文件
@@ -29,32 +34,50 @@ const onChangeAvatar = () => {
       // 本地临时文件路径 (本地路径)
       const { tempFilePath } = res.tempFiles[0]
       // 文件上传
-      uni.uploadFile({
-        url: '/member/profile/avatar',
-        name: 'file',
-        filePath: tempFilePath,
-        success: (res) => {
-          if (res.statusCode === 200) {
-            const avatar = JSON.parse(res.data).result.avatar
-            // 个人信息页数据更新
-            profile.value!.avatar = avatar
-            // store头像数据更新
-            memberStore.profile!.avatar = avatar
-            uni.showToast({
-              title: '更新成功',
-              icon: 'success',
-              mask: true,
-            })
-          } else {
-            uni.showToast({
-              title: '出现错误',
-              icon: 'error',
-            })
-          }
-        },
-      })
+      uploadFile(tempFilePath)
     },
   })
+  // #endif
+
+  // #ifdef H5 || APP-PLUS
+  uni.chooseImage({
+    count: 1,
+    success: (res) => {
+      console.log(res)
+      const tempFilePath = res.tempFilePaths[0]
+      // 文件上传
+      uploadFile(tempFilePath)
+    },
+  })
+  // #endif
+
+  const uploadFile = (tempFilePath: string) => {
+    // 文件上传
+    uni.uploadFile({
+      url: '/member/profile/avatar',
+      name: 'file',
+      filePath: tempFilePath,
+      success: (res) => {
+        if (res.statusCode === 200) {
+          const avatar = JSON.parse(res.data).result.avatar
+          // 个人信息页数据更新
+          profile.value!.avatar = avatar
+          // store头像数据更新
+          memberStore.profile!.avatar = avatar
+          uni.showToast({
+            title: '更新成功',
+            icon: 'success',
+            mask: true,
+          })
+        } else {
+          uni.showToast({
+            title: '出现错误',
+            icon: 'error',
+          })
+        }
+      },
+    })
+  }
 }
 //修改性别
 const onChangeGender: UniHelper.RadioGroupOnChange = (ev) => {
